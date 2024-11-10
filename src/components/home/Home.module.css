@@ -1,0 +1,74 @@
+.homeContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 10px;
+}
+
+#aboutPrescripify {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
+  #introText {
+    font-size: 1.2rem;
+    font-weight: 300;
+    color: #f1f1f1;
+    margin: 0;
+    font-weight: bold;
+  }
+  
+  #title {
+    font-size: 4rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0.5rem 0;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  }
+  
+  #description {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #f4f1f1;
+    margin-top: 1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    font-weight: bold;
+    /* margin: 1.5rem auto; */
+  }
+  
+  #ctaText {
+    font-size: 1rem;
+    color: #000000;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  }
+  
+  #ctaButton {
+    font-size: 1rem;
+    padding: 0.75rem 2rem;
+    color: #fff;
+    background: rgb(94, 0, 128);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 8px 16px rgba(96, 0, 128, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  #ctaButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(96, 0, 128, 0.4);
+  }
+
+#docImg {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+#docImg img {
+  height: 500px;
+}
