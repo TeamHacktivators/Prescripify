@@ -1,5 +1,4 @@
 import { Authenticator } from '@aws-amplify/ui-react';
-import React from 'react'
 import { Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
