@@ -1,0 +1,37 @@
+#navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: rgba(40, 25, 66, 0.9);
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  /* position: fixed;
+  top: 0; */
+  width: 100%;
+  z-index: 100;
+}
+
+#logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+#navLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navItem {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #d3d3d3;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navItem:hover {
+  color: #ffffff;
+}
