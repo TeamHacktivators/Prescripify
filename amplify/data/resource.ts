@@ -1,26 +1,47 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any user authenticated via an API key can "create", "read",
-"update", and "delete" any "Todo" records.
-=========================================================================*/
-const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.owner()]),
-});
+const schema = a
+  .schema({
+    Doctor: a
+      .model({
+        name: a.string().required(),
+        email: a.string().required(),
+        specialization: a.string().required(),
+        profilePic: a.string(),
+        signaturePic: a.string(),
+        patients: a.hasMany("Patient", "doctorId"),
+        prescriptions: a.hasMany("Prescription", "doctorId"),
+      })
+      ,
+
+    Patient: a
+      .model({
+        name: a.string().required(),
+        age: a.integer().required(),
+        email: a.string().required(),
+        doctorId: a.id().required(),
+        prescriptions: a.hasMany("Prescription", "patientId"),
+        doctor: a.belongsTo("Doctor", "doctorId"),
+      }),
+
+    Prescription: a
+      .model({
+        patientId: a.id().required(),
+        doctorId: a.id().required(),
+        date: a.timestamp().required(),
+        path: a.string().required(),
+        patient: a.belongsTo("Patient", "patientId"),
+        doctor: a.belongsTo("Doctor", "doctorId"),
+      }),
+  })
+  .authorization((allow) => [allow.owner()]);
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "userPool",
-    // API Key is used for a.allow.public() rules
+    defaultAuthorizationMode: "userPool", // Use userPool for default authentication
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
     },
