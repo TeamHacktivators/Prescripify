@@ -7,6 +7,7 @@ const schema = a
         name: a.string().required(),
         email: a.string().required(),
         specialization: a.string().required(),
+        clinicName: a.string().required(),
         profilePic: a.string(),
         signaturePic: a.string(),
         patients: a.hasMany("Patient", "doctorId"),

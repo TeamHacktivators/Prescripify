@@ -7,16 +7,16 @@
 
 .form {
   background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 500px;
+  max-width: 450px; 
 }
 
 h2 {
   text-align: center;
-  color: #6a4f9b; /* Light purple color */
+  color: #6a4f9b; 
 }
 
 .formGroup {
@@ -31,28 +31,11 @@ label {
 }
 
 input[type="text"],
-input[type="password"],
-input[type="file"] {
+input[type="password"] {
   width: 100%;
   padding: 10px;
   margin: 5px 0;
   border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.uploadContainer {
-  display: flex;
-  align-items: center;
-}
-
-.uploadButton {
-  margin-left: 10px;
-}
-
-.previewPic {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
   border-radius: 5px;
 }
 
