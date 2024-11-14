@@ -10,7 +10,7 @@ function Preview() {
   const tempAudioUrl = useSelector((state: RootState) =>
     selectTempAudioUrl(state)
   );
-  const postURL = import.meta.env.VITE_API_SPEECHTOTEXT as string;
+  const postURL = import.meta.env.VITE_API_SPEECHTOTEXT;
   const [response, setResponse] = useState<string | null>(null);
 
   useEffect(() => {
