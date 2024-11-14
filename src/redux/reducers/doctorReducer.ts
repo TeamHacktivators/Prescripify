@@ -13,9 +13,7 @@ const doctorSlice = createSlice({
     initialState,
     reducers: {
         setDoctorID: (state, action) => {
-            console.log("Doctor ID:", action.payload);
             state.id = action.payload;
-            console.log("State ID:", state.id);
         },
         setTempAudioUrl: (state, action) => {
             state.tempAudioUrl = action.payload;
