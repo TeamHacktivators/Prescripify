@@ -9,8 +9,8 @@ import { selectDoctorID, setDoctorID } from "../../redux/reducers/doctorReducer"
 import { RootState } from "../../redux/store";
 import Loader from "../loader/Loader";
 import AudioUpload from "../audioupload/AudioUpload";
-import DoctorForm from "../doctorform/DoctorForm";
 import Preview from "../previewComponent/Preview";
+import DoctorForm from "../doctorform/DoctorForm";
 
 function DoctorDashboard() {
   const { user, signOut } = useAuthenticator();
@@ -21,27 +21,27 @@ function DoctorDashboard() {
   const dispatch = useDispatch();
 
   const fetchDoctor = async () => {
-    if (doctorID === "") {
-      try {
-        const doctor = await client.models.Doctor.list({
-          filter: {
-            email: {
-              eq: email,
+      if(doctorID==""){
+        try {
+          const doctor = await client.models.Doctor.list({
+            filter: {
+              email: {
+                eq: email,
+              },
             },
-          },
-        });
-        if (doctor.data.length > 0) {
-          dispatch(setDoctorID(doctor.data[0].id));
+          });
+          if (doctor.data.length > 0) {
+            dispatch(setDoctorID(doctor.data[0].id));
+          }
+        } catch (error) {
+          console.error("Error fetching doctor data:", error);
+        } finally {
+          setIsLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching doctor data:", error);
-      } finally {
+      }
+      else{
         setIsLoading(false);
       }
-    }
-    else{
-      setIsLoading(false);
-    }
   };
 
   const handleSignOut = () => {
@@ -51,7 +51,7 @@ function DoctorDashboard() {
 
   useEffect(() => {
     fetchDoctor();
-  });
+  },[]); //[] is important do not remove
 
   if (isLoading) {
     return <Loader />;
