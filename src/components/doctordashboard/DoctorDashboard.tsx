@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectDoctorID, setDoctorID } from "../../redux/reducers/doctorReducer";
 import { RootState } from "../../redux/store";
-import DoctorForm from "../doctorform/DoctorForm";
 import Loader from "../loader/Loader";
 import AudioUpload from "../audioupload/AudioUpload";
+import DoctorForm from "../doctorform/DoctorForm";
 import Preview from "../previewComponent/Preview";
 
 function DoctorDashboard() {

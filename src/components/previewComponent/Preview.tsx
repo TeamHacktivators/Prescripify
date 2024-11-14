@@ -13,20 +13,20 @@ function Preview() {
   const postURL = import.meta.env.VITE_API_SPEECHTOTEXT as string;
   const [response, setResponse] = useState<string | null>(null);
 
-  const fetchResponse = async () => {
-    try {
-      const response = await axios.post(postURL, { audioUrl: tempAudioUrl });
-      setResponse(response.data);
-    } catch (error) {
-      console.error("Error fetching response:", error);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchResponse = async () => {
+      try {
+        const response = await axios.post(postURL, { audioUrl: tempAudioUrl });
+        setResponse(response.data);
+      } catch (error) {
+        console.error("Error fetching response:", error);
+      } finally {
+        setProcessing(false);
+      }
+    };
+
     fetchResponse();
-  }, [tempAudioUrl]);
+  }, [tempAudioUrl, postURL]);
 
   if (processing) {
     return <PreviewLoader />;
