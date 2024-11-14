@@ -1,0 +1,27 @@
+# Step 1: Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Step 2: Set the working directory inside the container
+WORKDIR /app/summarizer
+
+# Step 3: Copy the current directory contents into the container at /app
+COPY . /app/summarizer
+
+# Step 4: Install system dependencies (if needed)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Step 5: Create a virtual environment and install Python dependencies
+RUN python -m venv venv
+
+# Step 6: Install Python dependencies into the virtual environment
+RUN ./venv/bin/pip install --upgrade pip
+RUN ./venv/bin/pip install -r requirements.txt
+
+# Step 7: Expose port (Flask typically runs on port 5000)
+EXPOSE 5000
+
+# Step 8: Run the application
+CMD ["./venv/bin/python", "app.py"]
