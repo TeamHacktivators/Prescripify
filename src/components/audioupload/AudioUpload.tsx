@@ -106,7 +106,6 @@ function AudioUpload() {
       const bucketName = audioUrl.url.host.split(".")[0];
       const objectKey = decodeURIComponent(audioUrl.url.pathname.substring(1));
       const s3URL = `s3://${bucketName}/${objectKey}`;
-      console.log("Audio uploaded to S3:", s3URL);
       dispatch(setTempAudioUrl(s3URL));
       alert("Audio uploaded successfully!");
       navigate("/doctor/audioTextPreview");
