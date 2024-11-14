@@ -10,7 +10,7 @@ import { RootState } from "../../redux/store";
 import Loader from "../loader/Loader";
 import AudioUpload from "../audioupload/AudioUpload";
 import Preview from "../previewComponent/Preview";
-import DoctorForm from "../doctorform/DoctorForm";
+import DoctorDetails from "../doctordetails/DoctorDetails";
 
 function DoctorDashboard() {
   const { user, signOut } = useAuthenticator();
@@ -63,7 +63,7 @@ function DoctorDashboard() {
         path="/*"
         element={
           doctorID === "" ? (
-            <DoctorForm />
+            <DoctorDetails />
           ) : (
             <>
               <h1>Hi {doctorID}</h1>
