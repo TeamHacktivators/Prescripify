@@ -1,54 +1,70 @@
 import { useState } from "react";
-import { uploadData } from "aws-amplify/storage";
+import { uploadData, getUrl } from "aws-amplify/storage";
 import styles from "./DoctorForm.module.css";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import type { Schema } from "../../../amplify/data/resource";
 import { generateClient } from "aws-amplify/data";
-import { useNavigate } from "react-router-dom";
+import { Schema } from "../../../amplify/data/resource";
+import { useDispatch } from "react-redux";
+import { setDoctorID } from "../../redux/reducers/doctorReducer";
 
 function DoctorForm() {
   const [name, setName] = useState("");
   const [specialization, setSpecialization] = useState("");
+  const [clinicName, setClinicName] = useState("");
   const [profilePic, setProfilePic] = useState<File | null>(null);
   const [signaturePic, setSignaturePic] = useState<File | null>(null);
-
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const client = generateClient<Schema>();
-  const { user } = useAuthenticator();
-  const email = user.signInDetails?.loginId || "";
+  const { user, signOut } = useAuthenticator();
+  const email = user?.signInDetails?.loginId || "";
+  const dispatch = useDispatch();
 
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (loading) return;
+
+    setLoading(true);
+    setError(null);
+
     try {
-      const doctor = await client.models.Doctor.create({
+      const newDoctor = await client.models.Doctor.create({
         name,
         email,
         specialization,
+        clinicName,
       });
-      const doctorID = doctor.data?.id;
 
-      if (profilePic) {
-        const profilUrl = await uploadData({
-          path: `prescripify/${doctorID}/${profilePic.name}`,
-          data: profilePic,
-        });
-        console.log(profilUrl);
-      }
-      if (signaturePic) {
-        const signatureUrl = await uploadData({
-          path: `prescripify/${doctorID}/${signaturePic.name}`,
-          data: signaturePic,
-        });
-        console.log(signatureUrl);
-      }
-      alert("Doctor registered successfully with images uploaded!");
-      navigate("/doctor");
-      resetForm();
+      const doctorID = newDoctor.data?.id;
+      if (!doctorID) throw new Error("Failed to create doctor.");
+
+      const uploadFile = async (file: File, path: string) => {
+        await uploadData({ path, data: file });
+        const url = await getUrl({ path });
+        return url?.url.toString();
+      };
+
+      const profileUrl = profilePic ? await uploadFile(profilePic, `doctor/${doctorID}/${profilePic.name}`) : null;
+      const signatureUrl = signaturePic ? await uploadFile(signaturePic, `doctor/${doctorID}/${signaturePic.name}`) : null;
+
+      const { errors } = await client.models.Doctor.update({
+        id: doctorID,
+        profilePic: profileUrl,
+        signaturePic: signatureUrl,
+      });
+
+      if (errors) throw new Error("Failed to update doctor with images.");
+
+      dispatch(setDoctorID(doctorID));
+
+      alert("Doctor registration completed successfully!");
     } catch (error) {
-      console.error("Error creating doctor or uploading images:", error);
-      alert("There was an error registering the doctor.");
+      console.error("Error:", error);
+      setError("There was an error during the registration process. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,16 +76,9 @@ function DoctorForm() {
     if (file) setFile(file);
   };
 
-  const resetForm = () => {
-    setName("");
-    setSpecialization("");
-    setProfilePic(null);
-    setSignaturePic(null);
-  };
-
   return (
     <div className={styles.formContainer}>
-      <form onSubmit={handleFormSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <h2>Doctor Registration</h2>
 
         <div className={styles.formGroup}>
@@ -95,6 +104,17 @@ function DoctorForm() {
         </div>
 
         <div className={styles.formGroup}>
+          <label htmlFor="clinicName">Clinic Name</label>
+          <input
+            type="text"
+            id="clinicName"
+            value={clinicName}
+            onChange={(e) => setClinicName(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className={styles.formGroup}>
           <label>Profile Picture</label>
           <input
             type="file"
@@ -114,8 +134,13 @@ function DoctorForm() {
           />
         </div>
 
-        <button type="submit" className={styles.submitButton}>
-          Register Doctor
+        {error && <div className={styles.error}>{error}</div>}
+
+        <button type="submit" className={styles.submitButton} disabled={loading}>
+          {loading ? "Submitting..." : "Complete Registration"}
+        </button>
+        <button type="button" onClick={signOut} className={styles.signOutButton}>
+          Sign Out
         </button>
       </form>
     </div>

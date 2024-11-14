@@ -2,12 +2,43 @@ import { useEffect, useState } from "react";
 import styles from "./AudioUpload.module.css";
 import { FaMicrophone, FaFileAudio } from "react-icons/fa";
 
+import { uploadData, getUrl } from "aws-amplify/storage";
+import { generateClient } from "aws-amplify/api";
+import { Schema } from "../../../amplify/data/resource";
+import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setTempAudioUrl } from "../../redux/reducers/doctorReducer";
+
 function AudioUpload() {
+  const { user } = useAuthenticator();
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
+    null
+  );
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [uploadedAudio, setUploadedAudio] = useState<string | null>(null);
-  const [audioFile, setAudioFile] = useState<Blob | null>(null); // Single audio file for upload
+  const [audioFile, setAudioFile] = useState<Blob | null>(null);
+  const client = generateClient<Schema>();
+  const [doctorID, setDoctorID] = useState({});
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+
+  const fetchDoctor = async () => {
+    try {
+      const doctor = await client.models.Doctor.list({
+        filter: {
+          email: { eq: user?.signInDetails?.loginId },
+        },
+      });
+      if (doctor.data.length > 0) {
+        setDoctorID(doctor.data[0].id);
+      }
+    } catch (error) {
+      console.error("Error fetching doctor data:", error);
+    }
+  };
 
   useEffect(() => {
     navigator.mediaDevices
@@ -17,8 +48,8 @@ function AudioUpload() {
         setMediaRecorder(recorder);
         recorder.ondataavailable = (event) => {
           setAudioBlob(event.data);
-          setAudioFile(event.data); // Set the recorded audio as the file to be uploaded
-          setUploadedAudio(null); // Clear any previously uploaded audio preview
+          setAudioFile(event.data); 
+          setUploadedAudio(null); 
         };
       })
       .catch((error) => {
@@ -44,8 +75,8 @@ function AudioUpload() {
     const file = event.target.files?.[0];
     if (file && file.type === "audio/mpeg") {
       setUploadedAudio(URL.createObjectURL(file));
-      setAudioFile(file); // Set the selected audio file for upload
-      setAudioBlob(null); // Clear any previously recorded audio
+      setAudioFile(file);
+      setAudioBlob(null);
     } else {
       alert("Please upload a valid .mp3 file.");
     }
@@ -54,22 +85,34 @@ function AudioUpload() {
   const deleteAudio = () => {
     setAudioBlob(null);
     setUploadedAudio(null);
-    setAudioFile(null); // Clear the file to be uploaded
+    setAudioFile(null); 
   };
 
   const uploadToS3 = async () => {
     if (!audioFile) return;
+    const fileToUpload =
+      audioFile instanceof File
+        ? audioFile
+        : new File([audioFile], "recorded-audio.mp3", { type: "audio/mpeg" });
     try {
-      // Replace with actual S3 upload logic
-      // await Storage.put(`audio/${audioFile.name}`, audioFile, {
-      //   contentType: audioFile.type
-      // });
+      await uploadData({
+        path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
+        data: audioFile,
+      });
+
+      const audioUrl = await getUrl({
+        path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
+      });
+      dispatch(setTempAudioUrl(audioUrl.url.href));
       alert("Audio uploaded successfully!");
+      navigate("/doctor/audioTextPreview");
       deleteAudio();
     } catch (error) {
       console.error("Error uploading audio:", error);
     }
   };
+
+  fetchDoctor();
 
   return (
     <section id={styles.uploadContainer}>
@@ -84,8 +127,12 @@ function AudioUpload() {
             <li>Language should be clear and understandable and in English</li>
             <li>Audio should be in .mp3 format</li>
             <li>Audio should mention patient's name, age, and illness</li>
-            <li>Medicine should include its name, quantity, and time of intake</li>
-            <li>Doctor can also mention any other important information/tips</li>
+            <li>
+              Medicine should include its name, quantity, and time of intake
+            </li>
+            <li>
+              Doctor can also mention any other important information/tips
+            </li>
           </ul>
         </div>
         <div id={styles.uploadingContainer}>
@@ -95,11 +142,17 @@ function AudioUpload() {
                 className={styles.button}
                 onClick={isRecording ? stopRecording : startRecording}
               >
-                <FaMicrophone /> {isRecording ? "Stop Recording" : "Start Recording"}
+                <FaMicrophone />{" "}
+                {isRecording ? "Stop Recording" : "Start Recording"}
               </button>
             </div>
             <div id={styles.chooseFile}>
-              <input type="file" id="audioFile" accept=".mp3" onChange={handleFileUpload} />
+              <input
+                type="file"
+                id="audioFile"
+                accept=".mp3"
+                onChange={handleFileUpload}
+              />
               <label htmlFor="audioFile" className={styles.button}>
                 <FaFileAudio /> Choose Audio
               </label>
@@ -109,7 +162,14 @@ function AudioUpload() {
             <p>Here is your audio preview:</p>
             {(audioBlob || uploadedAudio) && (
               <div className={styles.audioPreview}>
-                <audio controls src={audioBlob ? URL.createObjectURL(audioBlob) : uploadedAudio || undefined} />
+                <audio
+                  controls
+                  src={
+                    audioBlob
+                      ? URL.createObjectURL(audioBlob)
+                      : uploadedAudio || undefined
+                  }
+                />
                 <button className={styles.deleteButton} onClick={deleteAudio}>
                   X
                 </button>

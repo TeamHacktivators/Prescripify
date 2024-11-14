@@ -7,7 +7,7 @@ function Home() {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate("/login");
+    navigate("/doctor");
   };
   return (
     <section>
