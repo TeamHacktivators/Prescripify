@@ -16,8 +16,10 @@ function Preview() {
   useEffect(() => {
     const fetchResponse = async () => {
       try {
+        console.log("tempAudioUrl", tempAudioUrl.toString());
         const response = await axios.post(postURL, { audioUrl: tempAudioUrl });
-        setResponse(response.data);
+        const transcription = JSON.parse(response.data.body).transcription;
+        setResponse(transcription);
       } catch (error) {
         console.error("Error fetching response:", error);
       } finally {
@@ -25,8 +27,10 @@ function Preview() {
       }
     };
 
-    fetchResponse();
-  }, [tempAudioUrl, postURL]);
+    if (response === null) {
+      fetchResponse();
+    }
+  }, [tempAudioUrl, postURL, response]);
 
   if (processing) {
     return <PreviewLoader />;
@@ -34,7 +38,7 @@ function Preview() {
 
   return (
     <>
-      <p>{response}</p>
+      <textarea name="" id="" value={response || ""}></textarea>
     </>
   );
 }

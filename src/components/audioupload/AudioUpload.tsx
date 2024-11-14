@@ -24,7 +24,6 @@ function AudioUpload() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-
   const fetchDoctor = async () => {
     try {
       const doctor = await client.models.Doctor.list({
@@ -48,13 +47,14 @@ function AudioUpload() {
         setMediaRecorder(recorder);
         recorder.ondataavailable = (event) => {
           setAudioBlob(event.data);
-          setAudioFile(event.data); 
-          setUploadedAudio(null); 
+          setAudioFile(event.data);
+          setUploadedAudio(null);
         };
       })
       .catch((error) => {
         console.error("Microphone access denied:", error);
       });
+    dispatch(setTempAudioUrl(""));
   }, []);
 
   const startRecording = () => {
@@ -85,7 +85,7 @@ function AudioUpload() {
   const deleteAudio = () => {
     setAudioBlob(null);
     setUploadedAudio(null);
-    setAudioFile(null); 
+    setAudioFile(null);
   };
 
   const uploadToS3 = async () => {
@@ -103,7 +103,11 @@ function AudioUpload() {
       const audioUrl = await getUrl({
         path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
       });
-      dispatch(setTempAudioUrl(audioUrl.url.href));
+      const bucketName = audioUrl.url.host.split(".")[0];
+      const objectKey = decodeURIComponent(audioUrl.url.pathname.substring(1));
+      const s3URL = `s3://${bucketName}/${objectKey}`;
+      console.log("Audio uploaded to S3:", s3URL);
+      dispatch(setTempAudioUrl(s3URL));
       alert("Audio uploaded successfully!");
       navigate("/doctor/audioTextPreview");
       deleteAudio();

@@ -2,38 +2,33 @@ import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
 
 const schema = a
   .schema({
-    Doctor: a
-      .model({
-        name: a.string().required(),
-        email: a.string().required(),
-        specialization: a.string().required(),
-        clinicName: a.string().required(),
-        profilePic: a.string(),
-        signaturePic: a.string(),
-        patients: a.hasMany("Patient", "doctorId"),
-        prescriptions: a.hasMany("Prescription", "doctorId"),
-      })
-      ,
+    Doctor: a.model({
+      name: a.string().required(),
+      email: a.string().required(),
+      specialization: a.string().required(),
+      clinicName: a.string().required(),
+      profilePic: a.string(),
+      signaturePic: a.string(),
+      patients: a.hasMany("Patient", "doctorId"),
+      prescriptions: a.hasMany("Prescription", "doctorId"),
+    }),
+    Patient: a.model({
+      name: a.string().required(),
+      age: a.integer().required(),
+      email: a.string().required(),
+      doctorId: a.id().required(),
+      prescriptions: a.hasMany("Prescription", "patientId"),
+      doctor: a.belongsTo("Doctor", "doctorId"),
+    }),
 
-    Patient: a
-      .model({
-        name: a.string().required(),
-        age: a.integer().required(),
-        email: a.string().required(),
-        doctorId: a.id().required(),
-        prescriptions: a.hasMany("Prescription", "patientId"),
-        doctor: a.belongsTo("Doctor", "doctorId"),
-      }),
-
-    Prescription: a
-      .model({
-        patientId: a.id().required(),
-        doctorId: a.id().required(),
-        date: a.timestamp().required(),
-        path: a.string().required(),
-        patient: a.belongsTo("Patient", "patientId"),
-        doctor: a.belongsTo("Doctor", "doctorId"),
-      }),
+    Prescription: a.model({
+      patientId: a.id().required(),
+      doctorId: a.id().required(),
+      date: a.timestamp().required(),
+      path: a.string().required(),
+      patient: a.belongsTo("Patient", "patientId"),
+      doctor: a.belongsTo("Doctor", "doctorId"),
+    }),
   })
   .authorization((allow) => [allow.owner()]);
 
