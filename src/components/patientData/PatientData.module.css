@@ -1,0 +1,142 @@
+.container {
+  max-width: 90%;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 25px;
+  color: #6a4c93;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  font-weight: bold;
+  color: #6a4c93;
+}
+
+.input,
+.textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: #c299ff;
+  box-shadow: 0 4px 10px rgba(194, 153, 255, 0.2);
+  outline: none;
+}
+
+.textarea {
+  resize: none;
+  height: 100px;
+  width: 100%;
+}
+
+.sectionHeader {
+  margin-bottom: 15px;
+  font-size: 1.8rem;
+  color: #6a4c93;
+}
+
+.button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.saveButton {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.saveButton:hover {
+  background-color: #45a049;
+}
+
+textarea,
+input,
+button {
+  font-family: "Arial", sans-serif;
+}
+
+.medicineCard {
+  margin-top: 15px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #e6e6e6;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.medicineCard .removeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff6b6b;
+  color: white;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+.medicineCard .removeButton:hover {
+  background-color: #ff4a4a;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #fdf9ff;
+  padding: 20px;
+  border: 1px solid #e2d9f3;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.addButton {
+  align-self: center;
+  background-color: #6a4c93;
+  color: white;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+}
+
+.addButton:hover {
+  background-color: #8d6ead;
+}
