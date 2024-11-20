@@ -1,44 +1,117 @@
-import PreviewLoader from "../previewLoader/PreviewLoader";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { selectTempAudioUrl } from "../../redux/reducers/doctorReducer";
+import styles from "./Preview.module.css";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import PreviewLoader from "../previewLoader/PreviewLoader";
+import PatientData from "../patientData/PatientData";
+import {
+  selectTempAudioUrl,
+  setTempAudioUrl,
+  setTempText,
+  selectTempText,
+} from "../../redux/reducers/doctorReducer";
+import {
+  setPatientData,
+  selectPatientData,
+} from "../../redux/reducers/patientReducer";
+import CheckComponent from "../checkComponent/CheckComponent";
 
 function Preview() {
-  const [processing, setProcessing] = useState(true);
-  const tempAudioUrl = useSelector((state: RootState) =>
-    selectTempAudioUrl(state)
-  );
+  const dispatch = useDispatch();
+  const tempAudioUrl = useSelector(selectTempAudioUrl);
+  const tempText = useSelector(selectTempText);
+  const patientData = useSelector(selectPatientData);
+  const [processing, setProcessing] = useState(false);
+  const [response, setResponse] = useState<string | null>(tempText || null);
+  const [editMode, setEditMode] = useState(false);
   const postURL = import.meta.env.VITE_API_SPEECHTOTEXT;
-  const [response, setResponse] = useState<string | null>(null);
+  const analysisURL = import.meta.env.VITE_API_DIGITALOCEAN_URL;
+
+  const fetchResponse = async () => {
+    if (!tempAudioUrl) return;
+    try {
+      const { data } = await axios.post(postURL, { audioUrl: tempAudioUrl });
+      const transcription = JSON.parse(data.body).transcription;
+      setResponse(transcription);
+      dispatch(setTempText(transcription));
+      dispatch(setTempAudioUrl(""));
+    } catch (error) {
+      console.error("Error fetching transcription:", error);
+    } finally {
+      setProcessing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchResponse = async () => {
-      try {
-        console.log("tempAudioUrl", tempAudioUrl.toString());
-        const response = await axios.post(postURL, { audioUrl: tempAudioUrl });
-        const transcription = JSON.parse(response.data.body).transcription;
-        setResponse(transcription);
-      } catch (error) {
-        console.error("Error fetching response:", error);
-      } finally {
-        setProcessing(false);
-      }
-    };
-
-    if (response === null) {
-      fetchResponse();
+    if (tempAudioUrl) {
+      setProcessing(true);
+      const timer = setTimeout(fetchResponse, 2000);
+      return () => clearTimeout(timer);
     }
-  }, [tempAudioUrl, postURL, response]);
+  }, [tempAudioUrl]);
 
-  if (processing) {
-    return <PreviewLoader />;
+  const analyzeData = async () => {
+    if (!response) return;
+    setProcessing(true);
+    try {
+      const { data } = await axios.post(
+        analysisURL,
+        { text: response },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      console.log("Data:", data);
+      dispatch(setPatientData(data));
+    } catch (error) {
+      console.error("Error analyzing data:", error);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setEditMode(true);
+    setResponse(event.target.value);
+  };
+
+  const handleSave = () => {
+    if (response) {
+      setEditMode(false);
+      dispatch(setTempText(response));
+    }
+  };
+
+  if (!processing && tempText == "" && patientData[0]?.patient == "") {
+    return <CheckComponent />;
   }
+
+  if (processing) return <PreviewLoader />;
 
   return (
     <>
-      <textarea name="" id="" value={response || ""}></textarea>
+      {patientData[0]?.patient != "" ? (
+        <PatientData />
+      ) : (
+        <div id={styles.previewContainer}>
+          <h1 id={styles.previewHeading}>Audio Text Preview</h1>
+          <textarea
+            name="description"
+            id="description"
+            value={response || ""}
+            onChange={handleTextChange}
+            className={styles.textarea}
+          />
+          <div id={styles.btnContainer}>
+            <button className={styles.previewBTN} onClick={handleSave}>
+              Save
+            </button>
+            {!editMode && (
+              <button className={styles.previewBTN} onClick={analyzeData}>
+                Analyze
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }

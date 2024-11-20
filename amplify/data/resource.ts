@@ -9,16 +9,23 @@ const schema = a
       clinicName: a.string().required(),
       profilePic: a.string(),
       signaturePic: a.string(),
-      patients: a.hasMany("Patient", "doctorId"),
+      patients: a.hasMany("DoctorPatient", "doctorId"), 
       prescriptions: a.hasMany("Prescription", "doctorId"),
     }),
+
     Patient: a.model({
       name: a.string().required(),
-      age: a.integer().required(),
+      age: a.string().required(),
       email: a.string().required(),
-      doctorId: a.id().required(),
+      doctors: a.hasMany("DoctorPatient", "patientId"), 
       prescriptions: a.hasMany("Prescription", "patientId"),
+    }),
+
+    DoctorPatient: a.model({ 
+      doctorId: a.id().required(),
+      patientId: a.id().required(),
       doctor: a.belongsTo("Doctor", "doctorId"),
+      patient: a.belongsTo("Patient", "patientId"),
     }),
 
     Prescription: a.model({
@@ -26,11 +33,24 @@ const schema = a
       doctorId: a.id().required(),
       date: a.timestamp().required(),
       path: a.string().required(),
+      illness: a.string().required(),
+      medicine: a.string().required(),
       patient: a.belongsTo("Patient", "patientId"),
       doctor: a.belongsTo("Doctor", "doctorId"),
     }),
+
+    Visit : a.model({
+      patientId: a.id().required(),
+      doctorId: a.id().required(),
+      presciptionId: a.id().required(),
+      date: a.timestamp().required(),
+      illness: a.string().required(),
+      prescription: a.string().required(),
+    }),
   })
   .authorization((allow) => [allow.owner()]);
+
+
 
 export type Schema = ClientSchema<typeof schema>;
 

@@ -3,39 +3,42 @@ import styles from "./AudioUpload.module.css";
 import { FaMicrophone, FaFileAudio } from "react-icons/fa";
 
 import { uploadData, getUrl } from "aws-amplify/storage";
-import { generateClient } from "aws-amplify/api";
-import { Schema } from "../../../amplify/data/resource";
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setTempAudioUrl } from "../../redux/reducers/doctorReducer";
+import Loader from "../loader/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setTempAudioUrl,
+  selectDoctorID,
+  setTempText,
+  selectEmail,
+} from "../../redux/reducers/doctorReducer";
+import { setPatientDataToInitialState } from "../../redux/reducers/patientReducer";
+import { listDoctorByEmail } from "../../models/doctor";
 
 function AudioUpload() {
-  const { user } = useAuthenticator();
   const [isRecording, setIsRecording] = useState(false);
+  const [isDocRegistered, setIsDocRegistered] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [uploadedAudio, setUploadedAudio] = useState<string | null>(null);
-  const [audioFile, setAudioFile] = useState<Blob | null>(null);
-  const client = generateClient<Schema>();
-  const [doctorID, setDoctorID] = useState({});
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const email = useSelector(selectEmail);
+  const doctorID = useSelector(selectDoctorID);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const fetchDoctor = async () => {
     try {
-      const doctor = await client.models.Doctor.list({
-        filter: {
-          email: { eq: user?.signInDetails?.loginId },
-        },
-      });
-      if (doctor.data.length > 0) {
-        setDoctorID(doctor.data[0].id);
-      }
+      const doctor = await listDoctorByEmail(email ?? "");
+      setIsDocRegistered(doctor.data.length > 0);
     } catch (error) {
       console.error("Error fetching doctor data:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -47,27 +50,26 @@ function AudioUpload() {
         setMediaRecorder(recorder);
         recorder.ondataavailable = (event) => {
           setAudioBlob(event.data);
-          setAudioFile(event.data);
+          setAudioFile(
+            new File([event.data], "recorded-audio.mp3", {
+              type: "audio/mpeg",
+            })
+          );
           setUploadedAudio(null);
         };
       })
       .catch((error) => {
         console.error("Microphone access denied:", error);
       });
+
+    fetchDoctor();
     dispatch(setTempAudioUrl(""));
-  }, []);
+  }, [dispatch, email]);
 
-  const startRecording = () => {
+  const handleRecording = () => {
     if (mediaRecorder) {
-      mediaRecorder.start();
-      setIsRecording(true);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder) {
-      mediaRecorder.stop();
-      setIsRecording(false);
+      isRecording ? mediaRecorder.stop() : mediaRecorder.start();
+      setIsRecording(!isRecording);
     }
   };
 
@@ -83,39 +85,58 @@ function AudioUpload() {
   };
 
   const deleteAudio = () => {
+    if (audioBlob) {
+      URL.revokeObjectURL(URL.createObjectURL(audioBlob));
+    }
+    if (uploadedAudio) {
+      URL.revokeObjectURL(uploadedAudio);
+    }
     setAudioBlob(null);
     setUploadedAudio(null);
     setAudioFile(null);
   };
 
+  const goToDashboard = () => navigate("/doctor");
+
   const uploadToS3 = async () => {
     if (!audioFile) return;
-    const fileToUpload =
-      audioFile instanceof File
-        ? audioFile
-        : new File([audioFile], "recorded-audio.mp3", { type: "audio/mpeg" });
+    setIsLoading(true);
     try {
+      const fileToUpload =
+        audioFile instanceof File
+          ? audioFile
+          : new File([audioFile], "recorded-audio.mp3", { type: "audio/mpeg" });
+
       await uploadData({
         path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
-        data: audioFile,
+        data: fileToUpload,
       });
 
       const audioUrl = await getUrl({
         path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
       });
-      const bucketName = audioUrl.url.host.split(".")[0];
-      const objectKey = decodeURIComponent(audioUrl.url.pathname.substring(1));
-      const s3URL = `s3://${bucketName}/${objectKey}`;
+
+      const s3URL = `s3://${
+        audioUrl.url.host.split(".")[0]
+      }/${decodeURIComponent(audioUrl.url.pathname.substring(1))}`;
+
       dispatch(setTempAudioUrl(s3URL));
+      dispatch(setTempText(""));
+      dispatch(setPatientDataToInitialState());
+
       alert("Audio uploaded successfully!");
       navigate("/doctor/audioTextPreview");
-      deleteAudio();
     } catch (error) {
       console.error("Error uploading audio:", error);
+    } finally {
+      setIsLoading(false);
+      deleteAudio();
     }
   };
 
-  fetchDoctor();
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <section id={styles.uploadContainer}>
@@ -124,10 +145,10 @@ function AudioUpload() {
       </div>
       <div id={styles.uploadRecordContainer}>
         <div id={styles.uploadingInfo}>
-          <p> Here are a few guidelines your audio should follow:</p>
+          <p>Here are a few guidelines your audio should follow:</p>
           <ul>
             <li>Audio should be clear with no or minimal background noise</li>
-            <li>Language should be clear and understandable and in English</li>
+            <li>Language should be clear and understandable in English</li>
             <li>Audio should be in .mp3 format</li>
             <li>Audio should mention patient's name, age, and illness</li>
             <li>
@@ -138,12 +159,14 @@ function AudioUpload() {
             </li>
           </ul>
         </div>
+
         <div id={styles.uploadingContainer}>
           <div id={styles.recordingMenu}>
             <div id={styles.uploadingRecord}>
               <button
                 className={styles.button}
-                onClick={isRecording ? stopRecording : startRecording}
+                onClick={handleRecording}
+                disabled={!isDocRegistered}
               >
                 <FaMicrophone />{" "}
                 {isRecording ? "Stop Recording" : "Start Recording"}
@@ -155,17 +178,26 @@ function AudioUpload() {
                 id="audioFile"
                 accept=".mp3"
                 onChange={handleFileUpload}
+                key={audioFile ? audioFile.name : ""}
+                disabled={!isDocRegistered}
               />
               <label htmlFor="audioFile" className={styles.button}>
                 <FaFileAudio /> Choose Audio
               </label>
             </div>
           </div>
-          <div>
+          {!isDocRegistered && (
+            <p>
+              First <span onClick={goToDashboard}>register as a doctor</span> to
+              upload audio
+            </p>
+          )}
+          <div id={styles.audioPreview}>
             <p>Here is your audio preview:</p>
             {(audioBlob || uploadedAudio) && (
-              <div className={styles.audioPreview}>
+              <div id={styles.audioPreviewControls}>
                 <audio
+                  key={new Date().getTime()}
                   controls
                   src={
                     audioBlob
@@ -176,15 +208,27 @@ function AudioUpload() {
                 <button className={styles.deleteButton} onClick={deleteAudio}>
                   X
                 </button>
+                {audioFile && (
+                  <button
+                    className={styles.uploadButton}
+                    onClick={uploadToS3}
+                    disabled={!isDocRegistered}
+                  >
+                    Upload Audio
+                  </button>
+                )}
               </div>
-            )}
-            {audioFile && (
-              <button className={styles.uploadButton} onClick={uploadToS3}>
-                Upload Audio
-              </button>
             )}
           </div>
         </div>
+      </div>
+      <div style={{ marginTop: "15px" }}>
+        <h2>Still confused about how to record?</h2>
+        <p style={{ textAlign: "center" }}>
+          <a href="/audio/prescripify_test.mp3" download="prescripify_test.mp3">
+            Click here to download a sample audio file to upload or listen.
+          </a>
+        </p>
       </div>
     </section>
   );

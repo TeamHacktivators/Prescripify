@@ -61,7 +61,7 @@
   margin: 0 auto;
 }
 
-#recordingMenu{
+#recordingMenu {
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -75,4 +75,49 @@
 
 #chooseFile input[type="file"] {
   display: none;
+}
+
+#audioPreview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+#audioPreviewControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.uploadButton {
+  background-color: rgb(43, 188, 43);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.uploadButton:hover {
+  background-color: rgb(33, 168, 33);
+}
+
+.deleteButton {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
 }

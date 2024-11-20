@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
 const initialState = {
-    id:"",
+    doctorID:"",
     tempAudioUrl: "",
-    email:"",
+    doctorEmail:"",
     tempText: "",
 };
 
@@ -13,13 +13,13 @@ const doctorSlice = createSlice({
     initialState,
     reducers: {
         setDoctorID: (state, action) => {
-            state.id = action.payload;
+            state.doctorID = action.payload;
         },
         setTempAudioUrl: (state, action) => {
             state.tempAudioUrl = action.payload;
         },
         setEmail: (state, action) => {
-            state.email = action.payload;
+            state.doctorEmail = action.payload;
         },
         setTempText: (state, action) => {
             state.tempText = action.payload;
@@ -29,7 +29,7 @@ const doctorSlice = createSlice({
 
 export const { setDoctorID, setTempAudioUrl, setEmail, setTempText } = doctorSlice.actions;
 export default doctorSlice.reducer;
-export const selectDoctorID = (state: RootState) => state.doctor.id;
+export const selectDoctorID = (state: RootState) => state.doctor.doctorID;
 export const selectTempAudioUrl = (state: RootState) => state.doctor.tempAudioUrl;
-export const selectEmail = (state: RootState) => state.doctor.email;
+export const selectEmail = (state: RootState) => state.doctor.doctorEmail;
 export const selectTempText = (state: RootState) => state.doctor.tempText;
