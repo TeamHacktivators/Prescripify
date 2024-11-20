@@ -1,5 +1,5 @@
 import Navbar from "../navbar/Navbar";
-import styles from "./team.module.css";
+import styles from "./Team.module.css";
 import Vridhi from "../../assets/vridhi.jpeg"
 import Sumit from "../../assets/dualfaced.jpg"
 import Vedant from "../../assets/vediie.png"
