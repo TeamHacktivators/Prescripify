@@ -1,0 +1,67 @@
+.teamSection {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 0;
+  }
+  
+  .title {
+    font-size: 2.5rem;
+    color: #fff; 
+    margin-bottom: 5rem;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+  
+  .teamGrid {
+    height:max-content;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 0 30px;
+    margin-bottom: 5rem;
+  }
+  
+  .teamMember {
+    background-color: #2d2d44;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .teamMember:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+  }
+  
+  .memberImage {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+  }
+  
+  .memberName {
+    font-size: 1.5em;
+    color: #cdb4db;
+    margin: 10px 0;
+  }
+  
+  .socialIcons {
+    margin-top: 10px;
+  }
+  
+  .socialLink {
+    color: #c0b7dd;
+    font-size: 1.5em;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+  }
+  
+  .socialLink:hover {
+    color: #7d5ba6;
+  }
+  
