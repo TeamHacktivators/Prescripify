@@ -24,6 +24,10 @@
   gap: 1.5rem;
 }
 
+#link {
+  text-decoration: none;
+}
+
 .navItem {
   font-size: 1rem;
   font-weight: 500;
