@@ -1,0 +1,182 @@
+.dashboard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  color: #fff;
+  text-align: center;
+  font-size: 2.5rem;
+}
+
+.patientProfile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.profileContainer {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 900px;
+  padding: 2rem;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.profileImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #0078d4;
+  margin-right: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 120, 212, 0.3);
+}
+
+.patientName {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #3d6dff;
+}
+
+.age {
+  font-size: 1.2rem;
+  color: #4a4a4a;
+}
+
+.email {
+  font-size: 1rem;
+  color: #0078d4;
+  font-weight: 500;
+}
+
+#infoContainer {
+  width: 50%;
+}
+
+.infoItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0.8rem 1.2rem;
+  background: #ffffff;
+  color: black;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.infoLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #000000;
+}
+
+.infoValue {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: black;
+}
+
+.infoValue:hover {
+  color: #0078d4;
+}
+
+.patientList {
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.patientList h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: #55407b
+}
+
+.patientCard {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.patientCard h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.patientCard p {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  margin-top: 0rem;
+}
+
+.prescriptionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.prescriptionList li {
+  background-color: #fff;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.prescriptionList li strong {
+  color: #007bff;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clinicName {
+  font-weight: bold;
+  color: #555;
+}
+
+.viewMoreLink {
+  text-decoration: none;
+  color: #0078d4;
+  font-weight: bold;
+}
+
+.viewMoreLink:hover {
+  text-decoration: underline;
+}
+
+.patientflex{
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
