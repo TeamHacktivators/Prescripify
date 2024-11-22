@@ -1,3 +1,5 @@
+import pdb
+
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium import webdriver
@@ -56,18 +58,18 @@ def extract_product_info_1mg(browser):
     # print("MRP Price:", mrp_price)
     # print("Discount:", discount)
 
-    data = {"Product Name":product_name,"Pack Size":pack_size,"Price":price,"MRP price":mrp_price,"Discount":discount}
+    data = {"Product Name":product_name,"Pack Size":pack_size,"Price":price,"MRP price":mrp_price,"Discount":discount,"Vendor":"1mg"}
     return data
 
 def test_1mg(medicine):
     search_xpath = "//input[@id='srchBarShwInfo']"
     search_icon_xpath = "//span/div[@class='header_search_icon']"
-    close_popup_xpath = "//div[@class='style__close-icon___3FflV']"
+    # close_popup_xpath = "//div[@class='style__close-icon___3FflV']"
     browser = setup()
     open_website(browser, "https://www.1mg.com/")
     browser.refresh()
-    popup = browser.find_element(By.XPATH,close_popup_xpath)
-    popup.click()
+    # popup = browser.find_element(By.XPATH,close_popup_xpath)
+    # popup.click()
     search_bar = browser.find_element(By.XPATH, search_xpath)
     search_bar.send_keys(medicine)
     search_icon = browser.find_element(By.XPATH, search_icon_xpath)
@@ -114,7 +116,7 @@ def extract_product_info_apollo(browser):
         # print(f"Discount: {discount if discount else 'N/A'}")
 
         data = {"Product Name": medicine_name, "Pack Size": pack_size, "Price": price, "MRP price": mrp,
-                "Discount": discount}
+                "Discount": discount,"Vendor":"Apollo"}
         return data
 
 
@@ -176,7 +178,7 @@ def extract_product_info_pharmeasy(browser):
         # print(f"Discount: {discount if discount else 'N/A'}")
 
         data = {"Product Name": medicine_name, "Pack Size": pack_size, "Price": price, "MRP price": mrp,
-                "Discount": discount}
+                "Discount": discount,"Vendor":"Pharmeasy"}
         return data
 
     except NoSuchElementException as e:
@@ -195,12 +197,18 @@ def test_pharmeasy(medicine):
     browser.quit()
     return data
 
-def get_all(medicine):
-    test_apollo(medicine)
-    print()
-    test_1mg(medicine)
-    print()
-    test_pharmeasy(medicine)
-
-
-
+def get_best(medicine):
+    data_apollo = test_apollo(medicine)
+    data_1mg = test_1mg(medicine)
+    data_pharmeasy = test_pharmeasy(medicine)
+    price_apollo =  data_apollo.get('Price')
+    price_1mg = data_1mg.get('Price')
+    price_pharmeasy = data_pharmeasy.get('Price')
+    print(price_pharmeasy,price_apollo,price_1mg)
+    price_min = min(price_pharmeasy,price_apollo,price_1mg)
+    if(price_apollo==price_min):
+        return data_apollo
+    elif(price_min==price_pharmeasy):
+        return data_pharmeasy
+    else:
+        return data_1mg
