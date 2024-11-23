@@ -6,9 +6,14 @@ import { useNavigate } from "react-router-dom";
 function Home() {
   const navigate = useNavigate();
 
-  const handleGetStarted = () => {
+  const handleDoctorStart = () => {
     navigate("/doctor");
   };
+
+  const handlePatientStart = () => {
+    navigate("/patient");
+  };
+
   return (
     <section>
       <Navbar />
@@ -20,19 +25,22 @@ function Home() {
             audio notes and transcribe them into a prescription.
           </p>
           <p id={styles.ctaText}>
-            {" "}
             "We use the latest in speech-to-text technology to make the process
             of writing prescriptions easier and faster. Our app is designed to
             be user-friendly and intuitive, so you can focus on what matters
             most: your patients."
           </p>
-          {/* <p id={styles.ctaText}>Click the button below to get started.</p> */}
-          <button id={styles.ctaButton} onClick={handleGetStarted}>
-            Get started
-          </button>
+          <div className={styles.buttonContainer}>
+            <button className={styles.ctaButton} onClick={handleDoctorStart}>
+              Get Started (Doctor)
+            </button>
+            <button className={styles.ctaButton} onClick={handlePatientStart}>
+              Get Started (Patient)
+            </button>
+          </div>
         </div>
         <div id={styles.docImg}>
-          <img src={docPic} alt="" />
+          <img src={docPic} alt="Doctor" />
         </div>
       </div>
     </section>

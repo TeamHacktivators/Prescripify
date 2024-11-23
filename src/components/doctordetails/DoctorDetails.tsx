@@ -5,6 +5,8 @@ import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useDispatch } from "react-redux";
 import { setDoctorID } from "../../redux/reducers/doctorReducer";
 import { createDoctor, updateDoctor } from "../../models/doctor";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function DoctorDetails() {
   const [formData, setFormData] = useState({
@@ -15,8 +17,6 @@ function DoctorDetails() {
     signaturePic: null as File | null,
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const { user, signOut } = useAuthenticator();
   const email = user?.signInDetails?.loginId || "";
   const dispatch = useDispatch();
@@ -27,10 +27,8 @@ function DoctorDetails() {
     if (loading) return;
 
     setLoading(true);
-    setError(null);
 
     try {
-      // Create Doctor
       const newDoctor = await createDoctor({
         name: formData.name,
         email,
@@ -41,7 +39,6 @@ function DoctorDetails() {
       const doctorID = newDoctor.data?.id;
       if (!doctorID) throw new Error("Failed to create doctor.");
 
-      // Upload files and get URLs
       const profileUrl = formData.profilePic
         ? (
             await uploadFile(
@@ -60,10 +57,6 @@ function DoctorDetails() {
           ).split("?")[0]
         : null;
 
-      console.log("Profile URL:", profileUrl);
-      console.log("Signature URL:", signatureUrl);
-
-      // Update doctor details with image URLs
       const { errors } = await updateDoctor(doctorID, {
         profilePic: profileUrl,
         signaturePic: signatureUrl,
@@ -72,10 +65,9 @@ function DoctorDetails() {
       if (errors) throw new Error("Failed to update doctor with images.");
 
       dispatch(setDoctorID(doctorID));
-      alert("Doctor registration completed successfully!");
-    } catch (error) {
-      console.error("Error:", error);
-      setError(
+      toast.success("Doctor registration completed successfully!");
+    } catch {
+      toast.error(
         "There was an error during the registration process. Please try again."
       );
     } finally {
@@ -103,7 +95,6 @@ function DoctorDetails() {
   };
 
   const isFormValid = () => {
-    // Ensure all fields and files are provided
     return (
       formData.name &&
       formData.specialization &&
@@ -175,8 +166,6 @@ function DoctorDetails() {
           />
         </div>
 
-        {error && <div className={styles.error}>{error}</div>}
-
         <button
           type="submit"
           className={styles.submitButton}
@@ -192,6 +181,7 @@ function DoctorDetails() {
           Sign Out
         </button>
       </form>
+      <ToastContainer />
     </div>
   );
 }

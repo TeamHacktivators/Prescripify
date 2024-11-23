@@ -48,8 +48,7 @@ const schema = a
       prescription: a.string().required(),
     }),
   })
-  .authorization((allow) => [allow.owner()]);
-
+  .authorization((allow) => [allow.publicApiKey()]);
 
 
 export type Schema = ClientSchema<typeof schema>;
@@ -57,7 +56,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: "userPool", // Use userPool for default authentication
+    defaultAuthorizationMode: "apiKey", // Use userPool for default authentication
     apiKeyAuthorizationMode: {
       expiresInDays: 30,
     },

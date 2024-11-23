@@ -36,9 +36,7 @@ const patientSlice = createSlice({
             state.patientID = action.payload;
         },
         setPatientData: (state, action) => {
-            console.log(action.payload);
             state.data = action.payload;
-            console.log(state.data);
         },
         setDoctorID: (state, action) => {
             state.doctorID = action.payload;

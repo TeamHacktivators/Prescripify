@@ -107,7 +107,7 @@ button {
   right: 10px;
   background-color: #ff6b6b;
   color: white;
-  padding: 8px 16px;
+  padding: 5px;
   font-size: 0.9rem;
   border-radius: 4px;
 }
@@ -139,4 +139,22 @@ button {
 
 .addButton:hover {
   background-color: #8d6ead;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form {
+    padding: 0;
+  }
+
+  .header {
+    font-size: 2rem;
+  }
 }

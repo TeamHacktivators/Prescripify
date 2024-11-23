@@ -27,7 +27,9 @@ function App() {
         <Route
           path="/patient/*"
           element={
-            <PatientDashboard />
+            <Authenticator variation="modal">
+              <PatientDashboard />
+            </Authenticator>
           }
         />
         <Route path="/prescriptiondetail" element={<PrescriptionDetail />} />

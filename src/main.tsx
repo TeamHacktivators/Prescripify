@@ -7,12 +7,14 @@ import "@aws-amplify/ui-react/styles.css";
 import { Provider } from "react-redux";
 import store, { persistor } from "./redux/store.ts";
 import { PersistGate } from "redux-persist/integration/react";
+import { ToastContainer } from "react-toastify";
 
 Amplify.configure(outputs);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
+      <ToastContainer />
       <App />
     </PersistGate>
   </Provider>
