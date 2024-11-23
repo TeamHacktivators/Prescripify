@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { getDoctorById } from "../../models/doctor";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { persistStore } from "redux-persist";
+import store from "../../redux/store";
 import { setDoctorID } from "../../redux/reducers/doctorReducer";
 import { getPatientsByDoctorId } from "../../models/patient";
 import { getPrescriptionByDoctorAndPatientId } from "../../models/prescription";
@@ -37,10 +39,7 @@ function AboutDoc({ docID }: AboutDocProps) {
             docID,
             p.data.id
           );
-          return {
-            ...p.data,
-            prescriptions: prescriptions || [],
-          };
+          return { ...p.data, prescriptions: prescriptions || [] };
         })
       );
 
@@ -54,6 +53,7 @@ function AboutDoc({ docID }: AboutDocProps) {
 
   const handleSignOut = () => {
     dispatch(setDoctorID(""));
+    persistStore(store).purge();
     signOut();
   };
 
@@ -83,7 +83,7 @@ function AboutDoc({ docID }: AboutDocProps) {
           href={`mailto:${doctor?.data?.email || ""}`}
           className={styles.infoValue}
         >
-          {doctor?.data?.email || "Not Available"}
+         Mail
         </a>
       ),
     },
@@ -146,7 +146,9 @@ function AboutDoc({ docID }: AboutDocProps) {
         <div className={styles.patientGrid}>
           {patientsWithPrescriptions.map((patient, index) => (
             <div key={patient.id} className={styles.patientCard}>
-              <h3>{index + 1 + ") " + patient.name}</h3>
+              <h3>
+                {index + 1}) {patient.name}
+              </h3>
               <p>Age: {patient.age}</p>
               <ul className={styles.prescriptionList}>
                 {patient.prescriptions.map((prescription: any) => (

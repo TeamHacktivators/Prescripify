@@ -14,7 +14,7 @@
 .workingtop {
     display: flex;
     justify-content: center;
-    align-items: flex-start; 
+    align-items: center; 
     gap: 3rem; 
     width: 100%;
     margin-bottom: 4rem;
@@ -142,6 +142,7 @@
 @media (max-width: 480px) {
     .workingtop {
         flex-direction: column;
+        align-items: center;
         gap: 2rem;
     }
     .workingleft {

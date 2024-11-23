@@ -1,3 +1,10 @@
+#customLoaderContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .loader {
   width: 48px;
   height: 48px;

@@ -1,7 +1,9 @@
 import styles from "./GeneralLoader.module.css";
 function GeneralLoader() {
   return (
-    <span className={styles.loader}></span>
+    <section id={styles.customLoaderContainer}>
+      <span className={styles.loader}></span>
+    </section>
   )
 }
 

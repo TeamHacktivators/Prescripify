@@ -1,35 +1,94 @@
-#pdfContainer{
-    display: flex;
-    justify-content: center;
+#pdfContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  min-height: 100vh; /* Ensures the content fills the screen */
+}
+
+#pdfPreviewHeading {
+  width: 100%;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-bottom: 2px dashed #fff;
+}
+
+#pdfPreview {
+  width: 90%;
+  height: 80vh;
+  border: 1px solid #000;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+#pdfDownloadButton {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#backButton {
+  padding: 10px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  #pdfPreviewHeading {
+    font-size: 2.5rem;
+  }
+
+  #pdfPreview {
+    width: 70%;
+    height: 70vh;
+  }
+}
+
+@media (max-width: 768px) {
+  #pdfPreviewHeading {
+    font-size: 2rem;
+  }
+
+  #pdfPreview {
+    width: 72%;
+    height: 60vh;
+  }
+
+  .buttonContainer {
     flex-direction: column;
-    align-items: center;
-    padding: 20px;
+    gap: 20px;
+  }
 }
 
-#pdfPreviewHeading{
+@media (max-width: 480px) {
+  #pdfPreviewHeading {
+    font-size: 1.5rem;
+  }
+
+  #pdfPreview {
+    height: 50vh;
+  }
+
+  #pdfDownloadButton,
+  #backButton {
     width: 100%;
-    text-align: center;
-    font-size: 3rem;
-    font-weight: 800;
-    color: #fff;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    border-bottom: 2px dashed #fff;
-}
-
-#pdfPreview{
-    width:90%;
-    height: 600px;
-    border: 1px solid #000;
-}
-
-#pdfDownloadButton{
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    padding: 12px;
+  }
 }

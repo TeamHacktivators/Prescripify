@@ -11,12 +11,15 @@ import {
   setTempText,
 } from "../../redux/reducers/doctorReducer";
 import { handlePatientAndDoctorRelationship } from "../../models/patient";
+import { toast } from "react-toastify"; 
+import "react-toastify/dist/ReactToastify.css"; 
 import styles from "./PatientData.module.css";
+import GeneralLoader from "../generalLoader/GeneralLoader";
 
 function PatientData() {
   const patientData = useSelector(selectPatientData)[0];
   const doctorID = useSelector(selectDoctorID);
-  console.log("Doctor ID:", doctorID);
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState(patientData);
   const dispatch = useDispatch();
   const [editing, setEditing] = useState(true);
@@ -61,15 +64,15 @@ function PatientData() {
 
   const handleSave = () => {
     setEditing(false);
-    console.log("Data:", data);
     dispatch(setPatientData([data]));
   };
 
   const generatePrescription = async () => {
     if (!data.patientEmail || !data.patient || !data.age) {
-      alert("Please fill all the fields");
+      toast.error("Please fill all the fields"); 
       return;
     }
+    setLoading(true);
     const { patient, patientEmail, age } = data;
     const { patientId } = await handlePatientAndDoctorRelationship({
       doctorId: doctorID,
@@ -79,6 +82,10 @@ function PatientData() {
     dispatch(setPatientID(patientId));
     navigate("/doctor/generatedPDF");
   };
+
+  if (loading) {
+    return  <GeneralLoader />;
+  }
 
   return (
     <div className={styles.container}>
@@ -190,6 +197,7 @@ function PatientData() {
               type="button"
               className={styles.saveButton}
               onClick={generatePrescription}
+              disabled={loading}
             >
               Generate Prescription
             </button>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./AudioUpload.module.css";
 import { FaMicrophone, FaFileAudio } from "react-icons/fa";
-
+import { toast } from "react-toastify";
 import { uploadData, getUrl } from "aws-amplify/storage";
 import { useNavigate } from "react-router-dom";
 import Loader from "../loader/Loader";
@@ -18,9 +18,7 @@ import { listDoctorByEmail } from "../../models/doctor";
 function AudioUpload() {
   const [isRecording, setIsRecording] = useState(false);
   const [isDocRegistered, setIsDocRegistered] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [uploadedAudio, setUploadedAudio] = useState<string | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -35,8 +33,8 @@ function AudioUpload() {
     try {
       const doctor = await listDoctorByEmail(email ?? "");
       setIsDocRegistered(doctor.data.length > 0);
-    } catch (error) {
-      console.error("Error fetching doctor data:", error);
+    } catch {
+      toast.error("Error fetching doctor data.");
     } finally {
       setIsLoading(false);
     }
@@ -50,17 +48,11 @@ function AudioUpload() {
         setMediaRecorder(recorder);
         recorder.ondataavailable = (event) => {
           setAudioBlob(event.data);
-          setAudioFile(
-            new File([event.data], "recorded-audio.mp3", {
-              type: "audio/mpeg",
-            })
-          );
+          setAudioFile(new File([event.data], "recorded-audio.mp3", { type: "audio/mpeg" }));
           setUploadedAudio(null);
         };
       })
-      .catch((error) => {
-        console.error("Microphone access denied:", error);
-      });
+      .catch(() => toast.error("Microphone access denied."));
 
     fetchDoctor();
     dispatch(setTempAudioUrl(""));
@@ -80,7 +72,7 @@ function AudioUpload() {
       setAudioFile(file);
       setAudioBlob(null);
     } else {
-      alert("Please upload a valid .mp3 file.");
+      toast.error("Please upload a valid .mp3 file.");
     }
   };
 
@@ -96,16 +88,11 @@ function AudioUpload() {
     setAudioFile(null);
   };
 
-  const goToDashboard = () => navigate("/doctor");
-
   const uploadToS3 = async () => {
     if (!audioFile) return;
     setIsLoading(true);
     try {
-      const fileToUpload =
-        audioFile instanceof File
-          ? audioFile
-          : new File([audioFile], "recorded-audio.mp3", { type: "audio/mpeg" });
+      const fileToUpload = new File([audioFile], "recorded-audio.mp3", { type: "audio/mpeg" });
 
       await uploadData({
         path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
@@ -116,18 +103,18 @@ function AudioUpload() {
         path: `doctor/${doctorID}/audio/${fileToUpload.name}`,
       });
 
-      const s3URL = `s3://${
-        audioUrl.url.host.split(".")[0]
-      }/${decodeURIComponent(audioUrl.url.pathname.substring(1))}`;
+      const s3URL = `s3://${audioUrl.url.host.split(".")[0]}/${decodeURIComponent(
+        audioUrl.url.pathname.substring(1)
+      )}`;
 
       dispatch(setTempAudioUrl(s3URL));
       dispatch(setTempText(""));
       dispatch(setPatientDataToInitialState());
 
-      alert("Audio uploaded successfully!");
+      toast.success("Audio uploaded successfully!");
       navigate("/doctor/audioTextPreview");
-    } catch (error) {
-      console.error("Error uploading audio:", error);
+    } catch {
+      toast.error("Error uploading audio.");
     } finally {
       setIsLoading(false);
       deleteAudio();
@@ -151,27 +138,20 @@ function AudioUpload() {
             <li>Language should be clear and understandable in English</li>
             <li>Audio should be in .mp3 format</li>
             <li>Audio should mention patient's name, age, and illness</li>
-            <li>
-              Medicine should include its name, quantity, and time of intake
-            </li>
-            <li>
-              Doctor can also mention any other important information/tips
-            </li>
+            <li>Medicine should include its name, quantity, and time of intake</li>
+            <li>Doctor can also mention any other important information/tips</li>
           </ul>
         </div>
 
         <div id={styles.uploadingContainer}>
           <div id={styles.recordingMenu}>
-            <div id={styles.uploadingRecord}>
-              <button
-                className={styles.button}
-                onClick={handleRecording}
-                disabled={!isDocRegistered}
-              >
-                <FaMicrophone />{" "}
-                {isRecording ? "Stop Recording" : "Start Recording"}
-              </button>
-            </div>
+            <button
+              className={styles.button}
+              onClick={handleRecording}
+              disabled={!isDocRegistered}
+            >
+              <FaMicrophone /> {isRecording ? "Stop Recording" : "Start Recording"}
+            </button>
             <div id={styles.chooseFile}>
               <input
                 type="file"
@@ -187,9 +167,9 @@ function AudioUpload() {
             </div>
           </div>
           {!isDocRegistered && (
-            <p>
-              First <span onClick={goToDashboard}>register as a doctor</span> to
-              upload audio
+            <p id={styles.notRegistered}>
+              First <span onClick={() => navigate("/doctor")}>register as a doctor</span> to upload
+              audio
             </p>
           )}
           <div id={styles.audioPreview}>
@@ -205,6 +185,7 @@ function AudioUpload() {
                       : uploadedAudio || undefined
                   }
                 />
+                <div id={styles.audioBtnContainer}>
                 <button className={styles.deleteButton} onClick={deleteAudio}>
                   X
                 </button>
@@ -217,6 +198,7 @@ function AudioUpload() {
                     Upload Audio
                   </button>
                 )}
+                </div>
               </div>
             )}
           </div>

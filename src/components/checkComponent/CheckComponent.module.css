@@ -1,7 +1,51 @@
-#checkComponentContainer{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+#checkComponentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  /* background: linear-gradient(135deg, #a994f1, #8064c5); */
+  /* background-color: #fff; */
+  color: black;
+  text-align: center;
+  padding: 20px;
+  font-family: "Arial", sans-serif;
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
+  border-radius: 10px;
+}
+
+#checkComponentContainer h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+#checkComponentContainer h3 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 0.8rem;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#checkComponentContainer p {
+  font-size: 1.2rem;
+  margin: 0.6rem 0;
+  line-height: 1.6;
+}
+
+#checkComponentContainer span {
+  color: #2f00ff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+#checkComponentContainer span:hover {
+  color: #0026ff;
+  transform: scale(1.1);
+}
+
+#checkComponentContainer p:last-child {
+  margin-top: 1rem;
 }

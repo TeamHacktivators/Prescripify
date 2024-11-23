@@ -14,6 +14,8 @@ import { getDoctorById } from "../../models/doctor";
 import { getUrl, uploadData } from "aws-amplify/storage";
 import { createPrescription } from "../../models/prescription";
 import CheckComponent from "../checkComponent/CheckComponent";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const loadImage = (url: string) => {
   return new Promise<HTMLImageElement>((resolve, reject) => {
@@ -116,6 +118,7 @@ function PDFViewer() {
   const patientDataFromStore = useSelector(selectPatientData)[0];
   const patientID = useSelector(selectPatientID);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const uploadPDF = async (pdfBlob: Blob) => {
     try {
@@ -133,7 +136,7 @@ function PDFViewer() {
 
       const path = pdfPath.url.toString().split("?")[0];
 
-      const pres = await createPrescription({
+      await createPrescription({
         patientId: patientID,
         doctorId: docID,
         path: path,
@@ -141,11 +144,12 @@ function PDFViewer() {
         date: new Date().toISOString(),
         medicine: JSON.stringify(patientDataFromStore.medicine),
       });
-      console.log("Prescription created:", pres);
+
       dispatch(setPatientDataToInitialState());
+      toast.success("Prescription generated successfully!");
     } catch (error) {
       console.error("Error uploading PDF to S3:", error);
-      throw error;
+      toast.error("Error uploading PDF. Please try again.");
     }
   };
 
@@ -164,14 +168,13 @@ function PDFViewer() {
         doctor: doctorDetails,
       };
 
-      console.log("Generating PDF...");
       const pdfBlob = await generatePDF(patientData);
       if (pdfBlob) {
         await uploadPDF(pdfBlob);
         setPdfUrl(URL.createObjectURL(pdfBlob));
       }
     } catch (error) {
-      console.error("Error fetching doctor details or generating PDF:", error);
+      toast.error("Error generating PDF. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -187,25 +190,36 @@ function PDFViewer() {
 
   return (
     <section id={styles.pdfContainer}>
-      <h1 id={styles.pdfPreviewHeading}>PDF Preview</h1>
       {pdfUrl ? (
-        <iframe src={pdfUrl} title="Prescription PDF" id={styles.pdfPreview} />
+        <>
+          <h1 id={styles.pdfPreviewHeading}>PDF Preview</h1>
+          <iframe
+            src={pdfUrl}
+            title="Prescription PDF"
+            id={styles.pdfPreview}
+          />
+          <div className={styles.buttonContainer}>
+            <button
+              onClick={() => {
+                if (pdfUrl) {
+                  const link = document.createElement("a");
+                  link.href = pdfUrl;
+                  link.download = "prescription.pdf";
+                  link.click();
+                }
+              }}
+              id={styles.pdfDownloadButton}
+            >
+              Download PDF
+            </button>
+            <button onClick={() => navigate("/doctor")} id={styles.backButton}>
+              Back to Dashboard
+            </button>
+          </div>
+        </>
       ) : (
         <CheckComponent />
       )}
-      <button
-        onClick={() => {
-          if (pdfUrl) {
-            const link = document.createElement("a");
-            link.href = pdfUrl;
-            link.download = "prescription.pdf";
-            link.click();
-          }
-        }}
-        id={styles.pdfDownloadButton}
-      >
-        Download PDF
-      </button>
     </section>
   );
 }

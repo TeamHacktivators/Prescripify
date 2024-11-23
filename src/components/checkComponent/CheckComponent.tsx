@@ -7,9 +7,10 @@ function CheckComponent() {
   const goToUpload = () => {
     navigate("/doctor/upload");
   };
+
   return (
     <section id={styles.checkComponentContainer}>
-      <h1>OOPS !</h1>
+      <h1>OOPS!</h1>
       <h3>You can't access this page</h3>
       <p>
         It seems like you haven't submitted data or it hasn't yet reached our

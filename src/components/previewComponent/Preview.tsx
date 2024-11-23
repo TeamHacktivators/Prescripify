@@ -15,6 +15,7 @@ import {
   selectPatientData,
 } from "../../redux/reducers/patientReducer";
 import CheckComponent from "../checkComponent/CheckComponent";
+import { toast } from "react-toastify";
 
 function Preview() {
   const dispatch = useDispatch();
@@ -36,7 +37,7 @@ function Preview() {
       dispatch(setTempText(transcription));
       dispatch(setTempAudioUrl(""));
     } catch (error) {
-      console.error("Error fetching transcription:", error);
+      toast.error("Error fetching transcription.");
     } finally {
       setProcessing(false);
     }
@@ -59,10 +60,10 @@ function Preview() {
         { text: response },
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log("Data:", data);
       dispatch(setPatientData(data));
+      dispatch(setTempText(""));
     } catch (error) {
-      console.error("Error analyzing data:", error);
+      toast.error("Error analyzing data.");
     } finally {
       setProcessing(false);
     }
@@ -80,7 +81,7 @@ function Preview() {
     }
   };
 
-  if (!processing && tempText == "" && patientData[0]?.patient == "") {
+  if (!processing && tempText === "" && patientData[0]?.patient === "") {
     return <CheckComponent />;
   }
 
@@ -88,7 +89,7 @@ function Preview() {
 
   return (
     <>
-      {patientData[0]?.patient != "" ? (
+      {patientData[0]?.patient !== "" ? (
         <PatientData />
       ) : (
         <div id={styles.previewContainer}>

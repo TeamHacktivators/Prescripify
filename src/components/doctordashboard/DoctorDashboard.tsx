@@ -30,7 +30,6 @@ function DoctorDashboard() {
       try {
         dispatch(setEmail(email));
         const doctor = await listDoctorByEmail(email ?? "");
-        console.log("Doctor data:", doctor);
         if (doctor.data.length > 0) {
           dispatch(setDoctorID(doctor.data[0].id));
         }

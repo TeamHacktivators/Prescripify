@@ -6,12 +6,11 @@
 }
 
 #uploadRecordHeading {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: white;
   border-bottom: 1px dashed white;
   text-align: center;
   font-weight: 800;
-  color: #fff;
   margin: 0.5rem 0;
   text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
@@ -27,17 +26,29 @@
 #uploadingContainer {
   background-color: aliceblue;
   border-radius: 10px;
-  padding: 20px;
+  padding: 15px;
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
 }
 
+#notRegistered{
+  color: red;
+  font-size: 1.2rem;
+  text-align: center;
+
+  span{
+    color: rgb(0, 0, 255);
+    font-weight: bold;
+    cursor: pointer;
+  }
+}
+
 .button {
-  background-color: #a994f1; /* Light purple */
+  background-color: #a994f1;
   color: white;
   border: none;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.6rem;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
   cursor: pointer;
   display: flex;
@@ -47,18 +58,7 @@
 }
 
 .button:hover {
-  background-color: #8f77e2; /* Darker purple on hover */
-}
-
-/* Main container */
-#uploadingContainer {
-  gap: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  background-color: #8064c5;
 }
 
 #recordingMenu {
@@ -67,57 +67,87 @@
   align-items: center;
 }
 
+#uploadingRecord,
 #chooseFile {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: space-between;
 }
 
-#chooseFile input[type="file"] {
+#chooseFile input {
   display: none;
 }
 
 #audioPreview {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+  margin-top: 20px;
 }
 
 #audioPreviewControls {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
 }
 
-.uploadButton {
-  background-color: rgb(43, 188, 43);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
+#audioBtnContainer{
   display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.uploadButton:hover {
-  background-color: rgb(33, 168, 33);
+  gap: 10px;
 }
 
 .deleteButton {
-  background-color: #ff4d4d;
+  background-color: red;
   color: white;
   border: none;
-  padding: 8px;
-  border-radius: 50%;
-  font-size: 15px;
-  font-weight: bold;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
   cursor: pointer;
+}
+
+.uploadButton {
+  background-color: green;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  #uploadRecordContainer {
+    grid-template-columns: 1fr;
+  }
+
+  #recordingMenu {
+    flex-direction: column;
+  }
+
+  #uploadRecordHeading {
+    font-size: 1.4rem;
+  }
+
+  .button {
+    padding: 0.6rem 1.4rem;
+    margin-top: 20px;
+    font-size: 12px;
+  }
+
+  #uploadingInfo,
+  #uploadingContainer {
+    padding: 12px;
+  }
+
+  #audioBtnContainer {
+    margin-top: 5px;
+  }
+
+  .deleteButton,
+  .uploadButton {
+    padding: 0.4rem 0.6rem;
+  }
+
+  #audioPreviewControls {
+    flex-direction: column;
+  }
+
+  #chooseFile label {
+    font-size: 12px;
+  }
 }

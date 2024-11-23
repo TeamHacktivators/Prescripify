@@ -50,3 +50,49 @@
   background-color: #7e6cf8;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  #previewHeading {
+    font-size: 2rem;
+  }
+
+  .textarea {
+    width: 90%;
+    height: 20%;
+  }
+
+  #btnContainer {
+    flex-direction: column;
+    width: 80%;
+  }
+
+  .previewBTN {
+    font-size: 1rem;
+    padding: 15px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  #previewHeading {
+    font-size: 1.5rem;
+  }
+
+  .textarea {
+    width: 90%;
+    height: 25%;
+  }
+
+  #btnContainer {
+    flex-direction: column;
+    width: 90%;
+  }
+
+  .previewBTN {
+    font-size: 1rem;
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
