@@ -16,6 +16,7 @@ const schema = a
     Patient: a.model({
       name: a.string().required(),
       age: a.string().required(),
+      gender: a.string().required(),
       email: a.string().required(),
       doctors: a.hasMany("DoctorPatient", "patientId"), 
       prescriptions: a.hasMany("Prescription", "patientId"),
@@ -31,7 +32,7 @@ const schema = a
     Prescription: a.model({
       patientId: a.id().required(),
       doctorId: a.id().required(),
-      date: a.timestamp().required(),
+      date: a.string().required(),
       path: a.string().required(),
       illness: a.string().required(),
       medicine: a.string().required(),

@@ -28,7 +28,7 @@ function PatientData() {
   useEffect(() => setData(patientData), [patientData]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
     index: number | undefined,
     type: string
   ) => {
@@ -68,15 +68,15 @@ function PatientData() {
   };
 
   const generatePrescription = async () => {
-    if (!data.patientEmail || !data.patient || !data.age) {
-      toast.error("Please fill all the fields"); 
+    if (!data.patientEmail || !data.patient || !data.age || !data.gender) {
+      toast.error("Please fill all the fields");
       return;
     }
     setLoading(true);
-    const { patient, patientEmail, age } = data;
+    const { patient, patientEmail, age, gender } = data;
     const { patientId } = await handlePatientAndDoctorRelationship({
       doctorId: doctorID,
-      patientData: { name: patient, age, email: patientEmail },
+      patientData: { name: patient, age, gender, email: patientEmail },
     });
     dispatch(setTempText(""));
     dispatch(setPatientID(patientId));
@@ -84,7 +84,7 @@ function PatientData() {
   };
 
   if (loading) {
-    return  <GeneralLoader />;
+    return <GeneralLoader />;
   }
 
   return (
@@ -125,6 +125,23 @@ function PatientData() {
               />
             </div>
           ))}
+
+          <div className={styles.formGroup}>
+            <label htmlFor="gender" className={styles.label}>Gender:</label>
+            <select
+              id="gender"
+              className={styles.select}
+              name="gender"
+              value={data.gender}
+              onChange={(e) => handleInputChange(e, undefined, "gender")}
+              required
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
         </div>
 
         <div className={styles.section}>

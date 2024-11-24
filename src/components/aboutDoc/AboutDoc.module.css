@@ -166,6 +166,12 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
+#prescripitionList{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .prescriptionList li strong {
   color: #007bff;
 }
@@ -262,6 +268,12 @@
 
   .infoItem {
     font-size: 0.85rem;
+  }
+
+  #prescripitionList{
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
   }
 
   .dashBtn {
