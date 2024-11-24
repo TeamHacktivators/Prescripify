@@ -1,6 +1,6 @@
 import styles from "./Working.module.css";
 import Navbar from '../navbar/Navbar';
-import Video from "../../assets/videodemo.mp4";
+import Video from "../../assets/Prescripify_Demo.mp4";
 import DocFlowchart from "../../assets/docflowchart.jpg";
 import PatFlowchart from "../../assets/patflowchart.jpg";
 
@@ -19,7 +19,7 @@ export default function Working() {
         </div>
         <div className={styles.workingright}>
           <div className={styles.video}>
-            <video className={styles.video} controls loop src={Video} autoPlay></video>
+            <video className={styles.video} controls loop src={Video} autoPlay muted></video>
           </div>
         </div>
       </div>
