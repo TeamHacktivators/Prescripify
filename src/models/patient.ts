@@ -4,6 +4,7 @@ export async function createPatient(data: {
   name: string;
   age: string;
   email: string;
+  gender: string;
 }) {
   try {
     return await modelClient.models.Patient.create(data);
@@ -97,7 +98,7 @@ export async function handlePatientAndDoctorRelationship({
   patientData,
 }: {
   doctorId: string;
-  patientData: { name: string; age: string; email: string };
+  patientData: { name: string; age: string; email: string, gender: string };
 }) {
   try {
     const existingPatients = await modelClient.models.Patient.list({
@@ -113,6 +114,7 @@ export async function handlePatientAndDoctorRelationship({
         name: patientData.name,
         age: patientData.age,
         email: patientData.email,
+        gender: patientData.gender,
       });
       if (newPatient.data?.id) {
         patientId = newPatient.data.id;

@@ -15,6 +15,7 @@ const initialState = {
                 }
             ],
             age:"",
+            gender:"",
             illness:"",
             tips:"",
             patientEmail:"",

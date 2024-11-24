@@ -26,10 +26,19 @@ const loadImage = (url: string) => {
   });
 };
 
+function formatDate(date: string | Date) {
+  const d = new Date(date);
+  const day = String(d.getDate()).padStart(2, "0"); // Add leading zero
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // Add leading zero
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 const generatePDF = async (data: {
   patient: string;
   age: string;
   illness: string;
+  gender: string;
   patientEmail: string;
   tips: string;
   medicine: {
@@ -38,6 +47,7 @@ const generatePDF = async (data: {
     duration: string;
     description: string;
   }[];
+  date: string;
   doctor: {
     doctorName: string;
     doctorSignUrl: string;
@@ -46,27 +56,43 @@ const generatePDF = async (data: {
 }) => {
   try {
     const doc = new jsPDF();
-    doc.setFontSize(25);
+
+    // Clinic Name (Header)
+    doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
     doc.text(`${data.doctor.docClinic}`, 105, 15, { align: "center" });
 
-    doc.setFontSize(18);
+    // Title and Date
+    doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text("Patient Prescription", 105, 25, { align: "center" });
-
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont("times", "normal");
-    doc.text(`Doctor : ${data.doctor.doctorName}`, 10, 30);
+    doc.text(`Date: ${data.date}`, 195, 25, { align: "right" });
 
+    // Doctor Information
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Doctor: ${data.doctor.doctorName}`, 10, 40);
+
+    // Horizontal Line
+    doc.line(10, 45, 200, 45);
+
+    // Patient Information
     doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("Patient Information", 10, 40);
+    doc.text("Patient Information", 10, 50);
     doc.setFont("helvetica", "normal");
-    doc.text(`Name: ${data.patient}`, 10, 50);
-    doc.text(`Age: ${data.age}`, 10, 60);
-    doc.text(`Illness: ${data.illness}`, 10, 70);
-    doc.text(`Email: ${data.patientEmail}`, 10, 80);
+    doc.text(`Name: ${data.patient}`, 10, 60);
+    doc.text(`Age: ${data.age}`, 10, 70);
+    doc.text(`Gender: ${data.gender}`, 10, 80);
+    doc.text(`Illness: ${data.illness}`, 10, 90);
+    doc.text(`Email: ${data.patientEmail}`, 10, 100);
 
+    // Horizontal Line
+    doc.line(10, 105, 200, 105);
+
+    // Medicines Section
     const medicineHeaders = ["Medicine", "Dosage", "Duration", "Description"];
     const medicineRows = data.medicine.map((med) => [
       med.name,
@@ -75,30 +101,33 @@ const generatePDF = async (data: {
       med.description,
     ]);
 
-    doc.setFontSize(12);
     doc.setFont("helvetica", "bold");
-    doc.text("Prescribed Medicines", 10, 90);
+    doc.text("Prescribed Medicines", 10, 115);
 
     autoTable(doc, {
-      startY: 100,
+      startY: 120,
       head: [medicineHeaders],
       body: medicineRows,
       theme: "grid",
-      headStyles: { fillColor: [22, 160, 133] },
-      styles: { fontSize: 10, halign: "center" },
+      headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0] },
+      styles: { fontSize: 10, halign: "center", lineWidth: 0.1 },
+      columnStyles: { 0: { halign: "left" } },
     });
 
     const yOffset = 200;
-    doc.setFontSize(12);
+
+    // Additional Tips
     doc.setFont("helvetica", "bold");
     doc.text("Additional Tips", 10, yOffset);
     doc.setFont("helvetica", "normal");
     doc.text(data.tips, 10, yOffset + 10, { maxWidth: 180 });
 
+    // Doctor's Signature
     if (data.doctor.doctorSignUrl) {
       try {
         const signatureImage = await loadImage(data.doctor.doctorSignUrl);
-        doc.addImage(signatureImage, "PNG", 140, yOffset + 40, 50, 25);
+        doc.text("Doctor's Signature:", 140, yOffset + 30);
+        doc.addImage(signatureImage, "PNG", 150, yOffset + 35, 40, 20);
       } catch (error) {
         console.error("Error loading signature image:", error);
       }
@@ -141,7 +170,7 @@ function PDFViewer() {
         doctorId: docID,
         path: path,
         illness: patientDataFromStore.illness,
-        date: new Date().toISOString(),
+        date: formatDate(new Date()),
         medicine: JSON.stringify(patientDataFromStore.medicine),
       });
 
@@ -166,6 +195,7 @@ function PDFViewer() {
       const patientData = {
         ...patientDataFromStore,
         doctor: doctorDetails,
+        date: formatDate(new Date()),
       };
 
       const pdfBlob = await generatePDF(patientData);
@@ -192,7 +222,7 @@ function PDFViewer() {
     <section id={styles.pdfContainer}>
       {pdfUrl ? (
         <>
-          <h1 id={styles.pdfPreviewHeading}>PDF Preview</h1>
+          <h1 id={styles.pdfPreviewHeading}>Prescription Preview</h1>
           <iframe
             src={pdfUrl}
             title="Prescription PDF"

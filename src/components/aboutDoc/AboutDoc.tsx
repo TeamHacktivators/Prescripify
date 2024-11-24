@@ -83,7 +83,7 @@ function AboutDoc({ docID }: AboutDocProps) {
           href={`mailto:${doctor?.data?.email || ""}`}
           className={styles.infoValue}
         >
-         Mail
+          Mail
         </a>
       ),
     },
@@ -152,8 +152,11 @@ function AboutDoc({ docID }: AboutDocProps) {
               <p>Age: {patient.age}</p>
               <ul className={styles.prescriptionList}>
                 {patient.prescriptions.map((prescription: any) => (
-                  <li key={prescription.id}>
-                    <strong>Illness:</strong> {prescription.illness} <br />
+                  <li key={prescription.id} id={styles.prescripitionList}>
+                    <div>
+                      <strong>Visit Date:</strong> {prescription.date} <br />
+                      <strong>Illness:</strong> {prescription.illness} <br />
+                    </div>
                     <a href={prescription.path} download>
                       Download Prescription
                     </a>

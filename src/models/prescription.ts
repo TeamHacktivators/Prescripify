@@ -2,9 +2,9 @@ import modelClient from "./client";
 
 
 // Create Prescription
-export async function createPrescription(data: { patientId: string; doctorId: string; date: string; path: string; illness:string, medicine: string }) {
+export async function createPrescription(data: { patientId: string; doctorId: string; date: string; path: string; illness:string, medicine: string}) {
     try {
-      return await modelClient.models.Prescription.create({ ...data, date: new Date(data.date).getTime() });
+      return await modelClient.models.Prescription.create({ ...data });
     } catch (error) {
       console.error("Error creating prescription:", error);
       throw error;
