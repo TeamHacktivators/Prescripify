@@ -207,7 +207,7 @@ function AudioUpload() {
       <div style={{ marginTop: "15px" }}>
         <h2>Still confused about how to record?</h2>
         <p style={{ textAlign: "center" }}>
-          <a href="/audio/prescripify_test.mp3" download="prescripify_test.mp3">
+         <a href="https://amplify-d1svayn9sg4olf-ma-prescripifystoragebucket-kuwxoliyqvbu.s3.ap-south-1.amazonaws.com/prescripify_test2.mp3" target="_blank" rel="noopener" download="https://amplify-d1svayn9sg4olf-ma-prescripifystoragebucket-kuwxoliyqvbu.s3.ap-south-1.amazonaws.com/prescripify_test2.mp3">
             Click here to download a sample audio file to upload or listen.
           </a>
         </p>
